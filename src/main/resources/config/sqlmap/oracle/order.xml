@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board.dao.OrderDAO">
+
+
+<insert id="insertOv" parameterType="kr.ac.kopo.vo.OrderVO">
+
+    <selectKey keyProperty="deliveryId" resultType="int" order="BEFORE">
+        SELECT seq_delivery.NEXTVAL FROM dual
+    </selectKey>
+
+    INSERT INTO delivery (DELIVERY_ID, USER_ID, RECIPIENT_NAME, RECIPIENT_PHONE, ADDRESS, ADDRESS_DETAIL, POST_CODE, TOTAL_PRICE, PAYMENT_METHOD
+    )
+    VALUES (#{deliveryId}, #{userId}, #{recipientName}, #{recipientPhone}
+    , #{address}, #{addressDetail}, #{postCode}, #{totalPrice}, #{paymentMethod}
+    )
+</insert>
+
+
+<insert id="insertDetail" parameterType="kr.ac.kopo.vo.OrderDetailVO">
+    INSERT INTO delivery_item (DELIVERY_ITEM_ID, DELIVERY_ID, FOOD_CODE
+    ,QUANTITY, PRICE
+    )
+    VALUES (seq_deli_detail.nextval, #{deliveryId}, #{foodCode}
+    , #{quantity}, #{price}
+    )
+</insert>
+
+<update id="updateOv" parameterType="kr.ac.kopo.vo.OrderVO">
+update delivery
+set DELIVERY_STATUS = #{deliveryStatus}
+where delivery_Id = #{deliveryId}
+</update>
+
+<update id="updateInvo" parameterType="kr.ac.kopo.vo.OrderVO">
+update delivery
+set INVOICE_NUMBER = #{invoiceNumber}
+where delivery_Id = #{deliveryId}
+</update>
+
+<select id="selectDetail" parameterType="kr.ac.kopo.vo.OrderVO" resultType="kr.ac.kopo.vo.OrderDetailVO">
+select DELIVERY_ITEM_ID id, DELIVERY_ID deliveryId, c1.FOOD_CODE foodCode, QUANTITY, PRICE, c2.FOOD_name foodName
+from delivery_item c1 join food_nm c2
+on c1.FOOD_CODE = c2.FOOD_CODE
+where delivery_Id = #{deliveryId}
+</select>
+
+<select id="selectOne" parameterType="kr.ac.kopo.vo.OrderVO" resultType="kr.ac.kopo.vo.OrderVO">
+select DELIVERY_ID deliveryId, USER_ID userId, ORDER_DATE orderDate, RECIPIENT_NAME recipientName
+, RECIPIENT_PHONE recipientPhone, ADDRESS address, ADDRESS_DETAIL addressDetail, 
+POST_CODE postCode, TOTAL_PRICE totalPrice, PAYMENT_METHOD paymentMethod
+from delivery
+where delivery_Id = #{deliveryId}
+</select>
+
+
+
+</mapper>

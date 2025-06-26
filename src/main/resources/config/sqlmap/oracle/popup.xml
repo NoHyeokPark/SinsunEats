@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board.dao.PopupDAO">
+
+  <select id="selectActivePopup" resultType="kr.ac.kopo.vo.PopupVO">
+  SELECT 
+    id, 
+    title, 
+    content, 
+    is_popup AS isPopup, 
+    start_date AS startDate, 
+    end_date AS endDate, 
+    reg_date AS regDate
+  FROM popup_notice
+  WHERE is_popup = 'Y'
+    AND TRUNC(SYSDATE) BETWEEN TRUNC(start_date) AND TRUNC(end_date)
+  ORDER BY regDate DESC
+  </select>
+
+  <select id="selectAllPopup" resultType="kr.ac.kopo.vo.PopupVO">
+  SELECT 
+    id, 
+    title, 
+    content, 
+    is_popup AS isPopup, 
+    start_date AS startDate, 
+    end_date AS endDate, 
+    reg_date AS regDate
+    ,    CASE
+      WHEN sysdate &lt; start_date THEN 0
+      WHEN sysdate &lt; end_date THEN 1
+      ELSE 2
+    END AS processed
+  FROM popup_notice
+  ORDER BY regDate DESC
+  </select>
+  
+  <insert id="insertPop" parameterType="kr.ac.kopo.vo.PopupVO">
+  INSERT INTO popup_notice (id, title, content, start_date, end_date)
+VALUES (
+    seq_popup_notice.nextval,
+    #{title},
+    #{content},
+    TO_DATE(#{startDate}, 'YYYY-MM-DD'),
+    TO_DATE(#{endDate}, 'YYYY-MM-DD')
+)
+  </insert>
+  
+  <update id="updatePop" parameterType="kr.ac.kopo.vo.PopupVO">
+  update popup_notice
+set title = #{title}, content = #{content}, start_date = #{startDate}
+, end_date = #{endDate}, is_popup = #{isPopup}
+where id = #{id}
+  </update>
+  
+    <update id="updateStat" parameterType="kr.ac.kopo.vo.PopupVO">
+  update popup_notice
+set is_popup = #{isPopup}
+where id = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="int">
+  DELETE FROM popup_notice
+WHERE id = #{id}
+  </delete>
+</mapper>

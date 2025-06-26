@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board.dao.MemberDAO">
+
+<insert id="signup" parameterType="userVO">
+	insert into MEMBERs
+		 (id, name, password, email_Id, email_Domain,
+				tel1, tel2, tel3, post, basic_Addr, detail_Addr) 
+		 values(#{id}, #{name}, #{password}, #{emailId}, #{emailDomain}, #{tel1}, #{tel2} ,#{tel3} ,#{post} ,#{basicAddr} ,#{detailAddr}) 
+</insert>
+
+<!-- 로그인 -->
+<select id="login" resultType="userVO" parameterType="userVO">
+select id, name, password, email_id as emailId, email_domain as emailDomain, tel1, tel2, tel3, post, basic_addr as basicAddr, detail_addr as DetailAddr, type, reg_date as regDate
+from MEMBERs
+where id = #{id} and password = #{password}
+</select>
+
+
+</mapper>

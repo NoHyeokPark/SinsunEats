@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board.dao.CartDAO">
+
+<insert id="insertCart" parameterType="kr.ac.kopo.vo.CartVO">
+    INSERT INTO cart (CART_ID, USER_ID, FOOD_CODE
+    ,QUANTITY
+    )
+    VALUES (seq_cart.nextval, #{userId}, #{foodCode}
+    , #{quantity}
+    )
+</insert>
+
+<select id="existCart" resultType="kr.ac.kopo.vo.CartVO" parameterType="kr.ac.kopo.vo.CartVO">
+select quantity
+from cart
+where user_id = #{userId} and food_code = #{foodCode}
+</select>
+
+<select id="selectCart" resultMap="carts" parameterType="String">
+select Cart_id, user_id, c.food_code as food_code, quantity, added_at, fi.food_name as foodName, fi.price as price, fi.DISCOUNT_PRICE discountPrice, fi.DISCOUNT_PERCENT discountPercent 
+from cart c join food_item fi
+on c.food_code = fi.food_code
+where user_id = #{a}
+</select>
+
+<select id="selectCheckCart" resultMap="carts" parameterType="int">
+select Cart_id, user_id, c.food_code as food_code, quantity, added_at, fi.food_name as foodName, fi.price as price, fi.DISCOUNT_PRICE discountPrice, fi.DISCOUNT_PERCENT discountPercent 
+from cart c join food_item fi
+on c.food_code = fi.food_code
+where cart_id = #{a}
+</select>
+
+<update id="updateCart" parameterType="kr.ac.kopo.vo.CartVO">
+update cart
+set quantity = #{quantity}
+where user_id = #{userId} and food_code = #{foodCode}
+</update>
+
+<update id="updateQuantity" parameterType="kr.ac.kopo.vo.CartVO">
+update cart
+set quantity = #{quantity}
+where cart_id = #{cartId}
+</update>
+
+<delete id="deleteOne" parameterType="int">
+DELETE FROM cart
+where cart_id = #{a}
+</delete>
+
+<select id="selectOVO" resultType="kr.ac.kopo.vo.OrderVO" parameterType="Map">
+select DELIVERY_ID as deliveryId, user_id as userId, DELIVERY_STATUS as deliveryStatus, ORDER_DATE orderDate, RECIPIENT_NAME recipientName, TOTAL_PRICE totalPrice, INVOICE_NUMBER invoiceNumber 
+from delivery
+<where>
+ORDER_DATE between to_date(#{startDate}, 'yyyy-mm-dd') and to_date(#{endDate}, 'yyyy-mm-dd')
+<if test="status != null and status != ''">
+and DELIVERY_STATUS = #{status}
+</if>
+<if test="keyword != null and keyword != ''">
+and (user_id = #{keyword} or RECIPIENT_NAME = #{keyword})
+</if>
+</where>
+
+</select>
+
+<resultMap type="kr.ac.kopo.vo.CartVO" id="carts">
+ <result column="Cart_id" property="cartId" />
+  <result column="user_id" property="userId" />
+  <result column="food_code" property="foodCode" />
+    <result column="added_at" property="addedAt" />
+</resultMap>
+
+</mapper>

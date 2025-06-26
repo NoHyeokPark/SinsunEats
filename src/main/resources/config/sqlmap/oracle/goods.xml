@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="goods">
+
+<select id="top8" resultMap="goods">
+select *
+from (
+select food_code, brand, price, 
+       discount_Percent, food_name
+from food_item
+order by discount_percent desc
+)
+where rownum &lt; 9
+</select>
+
+<select id="all" resultMap="goods" parameterType="map">
+select food_code, brand, price, 
+       discount_Percent, food_name
+from food_item
+  <where>
+    <if test="filter != null and filter != ''">
+      category_id = #{filter}
+    </if>
+    <if test="keyword != null and keyword != ''">
+      AND food_name LIKE '%' || #{keyword} || '%'
+    </if>
+ </where>
+order by food_code
+OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+</select>
+
+<select id="detail" resultMap="gtail" parameterType="String">
+select stock, detail_description, storage_method, shipping_fee, product_notice, price, discount_Percent, food_Name, fd.food_code
+from food_details fd join food_item fi on fd.food_code = fi.food_code
+where fd.food_code = #{s}
+</select>
+
+<select id="div" resultMap="goods">
+select distinct food_div as foodDiv, category_id
+from food_item
+order by category_id
+</select>
+
+<resultMap type="gvo" id="goods">
+ <result column="food_code" property="foodCode" />
+  <result column="discount_Percent" property="discountPercent" />
+  <result column="food_Name" property="foodName" />
+</resultMap>
+
+<resultMap type="kr.ac.kopo.vo.GoodsDetailVO" id="gtail">
+ <result column="DETAIL_DESCRIPTION" property="detailDescription" />
+  <result column="STORAGE_METHOD" property="storageMethod" />
+  <result column="SHIPPING_FEE" property="shippingFee" />
+  <result column="PRODUCT_NOTICE" property="productNotice" />
+  <result column="CREATED_AT" property="createdAt" />
+  <result column="UPDATED_AT" property="updatedAt" />
+   <result column="food_code" property="foodCode" />
+  <result column="discount_Percent" property="discountPercent" />
+  <result column="food_Name" property="foodName" />
+</resultMap>
+</mapper>

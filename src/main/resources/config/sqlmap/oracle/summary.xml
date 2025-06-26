@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="board.dao.summary">
+  
+  <select id="monthSale">
+  SELECT TO_CHAR(STAT_DATE, 'YYYY-MM'), SUM(TOTAL_SALES) 
+  FROM DAILY_SALES_STATS 
+  GROUP BY TO_CHAR(STAT_DATE, 'YYYY-MM')
+  </select>
+  
+  <select id="order7">
+SELECT STAT_DATE, ORDER_COUNT 
+FROM DAILY_SALES_STATS 
+WHERE STAT_DATE >= SYSDATE - 7
+  </select>
+  
+  <select id="monthByCategory">
+  SELECT TO_CHAR(STAT_DATE, 'YYYY-MM'), SUM(TOTAL_SALES) 
+  FROM PRODUCT_SALES_STATS 
+  WHERE CATEGORY_ID = 10 GROUP BY TO_CHAR(STAT_DATE, 'YYYY-MM')
+  </select>
+  
+    <select id="weeklyTop5">
+  SELECT FOOD_CODE, SUM(TOTAL_QUANTITY) 
+  FROM PRODUCT_SALES_STATS 
+  WHERE STAT_DATE >= SYSDATE - 7 
+  GROUP BY FOOD_CODE 
+  ORDER BY 2 DESC 
+  FETCH FIRST 5 ROWS ONLY
+  </select>
+  
+    <select id="convertOrder">
+  SELECT A.STAT_DATE, (A.ORDER_COUNT / B.UNIQUE_VISITORS) * 100 
+  FROM DAILY_SALES_STATS A JOIN DAILY_VISIT_STATS B 
+                             ON A.STAT_DATE = B.STAT_DATE;
+  </select>
+  
+  </mapper>
