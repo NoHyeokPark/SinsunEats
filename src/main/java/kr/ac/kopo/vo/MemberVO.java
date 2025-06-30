@@ -14,6 +14,7 @@ public class MemberVO {
 	private String detailAddr;
 	private String type;
 	private String regDate;
+	private int mileage;
 	
 	public MemberVO() {
 		// TODO Auto-generated constructor stub
@@ -162,5 +163,15 @@ public class MemberVO {
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
+
+	public int getMileage() {
+		return mileage;
+	}
+
+	public void setMileage(int mileage) {
+		this.mileage = mileage;
+	}
+	
+	
 
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import kr.ac.kopo.vo.GoodsDetailVO;
 import kr.ac.kopo.vo.GoodsVO;
+import kr.ac.kopo.vo.ReviewVO;
+import kr.ac.kopo.vo.nutritionVO;
 
 @Repository
 public class GoodsDAOimpl implements GoodsDAO {
@@ -25,7 +27,7 @@ public class GoodsDAOimpl implements GoodsDAO {
 	@Override
 	public List<GoodsVO> goodsAll(int no, String filter, String keyword) {
 		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("offset", (no-1)*20);
+		paramMap.put("offset", (no-1)*10);
 		paramMap.put("filter", filter);
 		paramMap.put("keyword", keyword);
 		return sql.selectList("goods.all", paramMap);
@@ -42,4 +44,17 @@ public class GoodsDAOimpl implements GoodsDAO {
 
 		return sql.selectList("goods.div");
 	}
+	
+	@Override
+	public nutritionVO selectNutrition(String code) {
+		// TODO Auto-generated method stub
+		return sql.selectOne("goods.nut", code);
+	}
+	
+	@Override
+	public List<ReviewVO> selectReview(String code) {
+
+		return sql.selectList("review.list", code);
+	}
+	
 }

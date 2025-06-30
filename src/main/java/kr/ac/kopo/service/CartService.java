@@ -89,4 +89,13 @@ public class CartService {
 	public OrderVO selectOne(OrderVO order) {
 		return od.selectOne(order);
 	}
+	
+	
+	public List<OrderVO> list(String id){
+		
+		return od.selectCs(id);
+	}
+	
+
+	
 }

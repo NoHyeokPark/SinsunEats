@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="review">
+
+<select id="list" resultType="kr.ac.kopo.vo.ReviewVO" parameterType="String">
+select *
+from
+(
+select REVIEW_ID reviewId, FOOD_CODE foodCode, REG_DATE regDate, TITLE, CONTENT, WRITER, GRADE
+from food_review
+where food_code = #{s}
+order by GRADE DESC
+)
+where rownum &lt; 6
+</select>
+
+
+</mapper>

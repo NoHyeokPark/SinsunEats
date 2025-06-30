@@ -187,8 +187,8 @@
 			<form action="${pageContext.request.contextPath}/cs/write"
 				method="post" enctype="multipart/form-data">
 				<div class="form-group">
-					<label for="category">문의 유형</label> 
-					<select id="category" name="category">
+					<label for="category">문의 유형</label> <select id="category"
+						name="category" onchange="showInfo()">
 						<option value="ORDER">주문/결제</option>
 						<option value="DELIVERY">배송</option>
 						<option value="RETURN">취소/반품/교환</option>
@@ -196,6 +196,40 @@
 						<option value="ETC">기타</option>
 					</select>
 				</div>
+
+				<div id="ORDER_info" class="category-info">
+					<c:if test="${not empty order}">
+						<div id="order_list_div">
+							<select id="orderReference" name="orderReference">
+								<option value="">문의할 주문을 선택하세요</option>
+								<%-- "order" 리스트를 순회하며 option 태그를 생성합니다. --%>
+								<c:forEach var="o" items="${order}">
+									<%-- option의 value에는 주문번호(PK)를, 텍스트에는 상품명 등을 표시 --%>
+									<option value="${o.deliveryId}">받는 분 :
+										${o.recipientName}(주문일: ${o.orderDate}) 금액 : ${o.totalPrice}</option>
+								</c:forEach>
+							</select>
+						</div>
+					</c:if>
+				</div>
+
+				<div id="DELIVERY_info" class="category-info">
+					<p>배송 관련 문의 시, 주문번호와 함께 문의 내용을 남겨주시면 더 빠른 처리가 가능합니다.</p>
+				</div>
+
+				<div id="RETURN_info" class="category-info">
+					<p>취소/반품/교환은 '마이페이지 > 주문내역'에서 신청하실 수 있습니다.</p>
+				</div>
+
+				<div id="MEMBER_info" class="category-info">
+					<p>회원정보 관련 문의 내용을 자세히 적어주세요.</p>
+				</div>
+
+				<div id="ETC_info" class="category-info">
+					<p>기타 문의 내용을 자세히 적어주세요.</p>
+				</div>
+<br>
+				<%-- 여기에 다른 공통 입력 필드들 (제목, 내용 등) --%>
 
 				<c:if test="${empty user }">
 
@@ -210,9 +244,12 @@
 					<input type='hidden' name='writer' value="${user.id}">
 				</c:if>
 
+
+
 				<div class="form-group">
 					<c:choose>
 						<c:when test="${not empty user}">
+							<label>전화 번호</label>
 							<input type="text" name="tel" id="tel"
 								value="${user.tel1}-${user.tel2}-${user.tel3}" required>
 						</c:when>
@@ -268,7 +305,26 @@
                 const fileName = fileInput.value.split('\\').pop();
                 fileNameDisplay.value = fileName ? fileName : '첨부파일';
             });
+            showInfo();
         });
+        function showInfo() {
+            // 1. 모든 정보 영역을 일단 숨깁니다.
+            const allInfoDivs = document.querySelectorAll('.category-info');
+            allInfoDivs.forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // 2. select 요소에서 현재 선택된 값(value)을 가져옵니다.
+            const selectedCategory = document.getElementById('category').value;
+
+            // 3. 선택된 값에 해당하는 id를 가진 정보 영역을 찾습니다.
+            const infoToShow = document.getElementById(selectedCategory + '_info');
+
+            // 4. 해당 정보 영역이 존재하면 화면에 보여줍니다 (display = 'block').
+            if (infoToShow) {
+                infoToShow.style.display = 'block';
+            }
+        }
     </script>
 </body>
 </html>

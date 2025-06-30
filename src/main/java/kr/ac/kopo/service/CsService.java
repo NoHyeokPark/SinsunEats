@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import kr.ac.kopo.board.dao.CsDAO;
 import kr.ac.kopo.vo.CsBoardVO;
+import kr.ac.kopo.vo.KakaoTokenHolderVO;
 
 @Service
 public class CsService {
@@ -14,8 +15,12 @@ public class CsService {
 	@Autowired
 	private CsDAO csdao;
 	
+	
+	private KakaoTokenHolderVO token;
+	
 	public void write(CsBoardVO cs) {
 		csdao.insert(cs);	
+		
 	}
 	
 	public CsBoardVO one(int no){

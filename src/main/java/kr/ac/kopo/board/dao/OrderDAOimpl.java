@@ -49,4 +49,10 @@ public class OrderDAOimpl implements OrderDAO {
 		// TODO Auto-generated method stub
 		return sql.selectOne("board.dao.OrderDAO.selectOne",order);
 	}
+	
+	@Override
+	public List<OrderVO> selectCs(String id) {
+		// TODO Auto-generated method stub
+		return sql.selectList("board.dao.OrderDAO.selectCsOVO",id);
+	}
 }

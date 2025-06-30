@@ -39,4 +39,15 @@ public class MemberDAOimpl implements MemberDAO {
 		return super.toString();
 	}
 
+	@Override
+	public MemberVO apiLogin(MemberVO m) {
+		// TODO Auto-generated method stub
+		return sql.selectOne("board.dao.MemberDAO.loginApi", m);
+	}
+	
+	@Override
+	public void useMileage(MemberVO m) {
+		sql.update("board.dao.MemberDAO.mileage", m);
+		
+	}
 }

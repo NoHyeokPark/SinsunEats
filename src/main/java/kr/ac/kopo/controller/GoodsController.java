@@ -18,6 +18,8 @@ import kr.ac.kopo.board.dao.GoodsDAO;
 import kr.ac.kopo.service.GoodsService;
 import kr.ac.kopo.vo.GoodsDetailVO;
 import kr.ac.kopo.vo.GoodsVO;
+import kr.ac.kopo.vo.ReviewVO;
+import kr.ac.kopo.vo.nutritionVO;
 
 @Controller
 public class GoodsController {
@@ -38,7 +40,7 @@ public class GoodsController {
 
 		int startPage = ((no - 1) / pageCountPerBlock) * pageCountPerBlock + 1;
 		int endPage = startPage + pageCountPerBlock - 1;
-		if (list.size() == 20) {
+		if (list.size() == 8) {
 			totalPage = endPage + 1;
 		} else {
 			totalPage = no;
@@ -47,16 +49,21 @@ public class GoodsController {
 		mav.addObject("startPage", startPage);
 		mav.addObject("endPage", endPage);
 		mav.addObject("filter", filter);
+		mav.addObject("keyword", keyword);
 		return mav;
 	}
 
 	@GetMapping("/detail")
 	public ModelAndView detail(@RequestParam("code") String foodCode) {
 		GoodsDetailVO detail = gs.detailService(foodCode);
+		nutritionVO nvo = gs.nutrition(foodCode);
+		List<ReviewVO> list = gs.reviewList(foodCode);
 		ModelAndView mav = new ModelAndView("goods/detail");
 		LocalDate tomorrow = LocalDate.now().plusDays(1);
 		String dayOfWeek = tomorrow.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 		String deliveryDate = tomorrow.format(DateTimeFormatter.ofPattern("M/d"));
+		mav.addObject("nutrition", nvo);
+		mav.addObject("reviews", list);
 		mav.addObject("detail", detail);
 		mav.addObject("deliveryDate", deliveryDate);
 		mav.addObject("deliveryDayOfWeek", dayOfWeek); 

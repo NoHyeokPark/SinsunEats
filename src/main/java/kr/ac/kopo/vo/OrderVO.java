@@ -22,4 +22,5 @@ public class OrderVO {
 		private String paymentMethod;
 		private int invoiceNumber;
 		private String updatedAt;
+		private int usedMileage;
 }

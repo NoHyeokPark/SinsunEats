@@ -204,6 +204,38 @@ body {
 					</tr>
 				</thead>
 				<tbody>
+				<c:if test="${not empty cs}">
+						<tr>
+							<td>${cs.deliveryId}</td>
+							<td>${cs.orderDate}</td>
+							<td>${cs.userId}</td>
+							<td>${cs.recipientName}</td>
+							<td><fmt:formatNumber value="${cs.totalPrice}"
+									pattern="#,##0" />원</td>
+							<td>			<select class="form-select form-select-sm"
+									onchange="updateStatus('${cs.deliveryId}', this.value)">
+									<option value="출고준비"
+										<c:if test="${order.deliveryStatus == '출고준비'}">selected</c:if>>출고준비</option>
+									<option value="배송중"
+										<c:if test="${order.deliveryStatus == '배송중'}">selected</c:if>>배송중</option>
+									<option value="배송완료"
+										<c:if test="${order.deliveryStatus == '배송완료'}">selected</c:if>>배송완료</option>
+									<option value="취소됨"
+										<c:if test="${order.deliveryStatus == '취소됨'}">selected</c:if>>취소됨</option>
+								</select></td>
+							<td>
+								<div class="inline-form">
+									<input type="text" id="invoice_${cs.deliveryId}"
+										class="form-control form-control-sm"
+										value="${cs.invoiceNumber}" placeholder="송장번호 입력">
+									<button class="btn btn-sm btn-outline-secondary"
+										onclick="updateInvoice('${cs.deliveryId}')">저장</button>
+								</div>
+							</td>
+							<td><button class="btn btn-sm btn-outline-primary"
+									onclick="openOrderDetailModal('${cs.deliveryId}')">상세보기</button></td>
+						</tr>
+					</c:if>
 					<c:forEach var="order" items="${orderList}">
 						<tr>
 							<td>${order.deliveryId}</td>
@@ -441,8 +473,8 @@ body {
                         '<div class="detail-section">' +
                             '<h5>교환/환불 처리</h5>' +
                             '<p class="text-muted small">요청 처리 시, 주문 상태도 함께 변경해주세요.</p>' +
-                            '<button class="btn btn-sm btn-outline-warning">교환 승인</button>' +
-                            '<button class="btn btn-sm btn-outline-danger">환불 승인</button>' +
+                            '<button id=refundApproveBtn class="btn btn-sm btn-outline-danger" data-user-id='+order.userId+
+                            ' data-used-mileage='+ (order.usedMileage + order.totalPrice) +' >환불 승인</button>' +
                         '</div>' +
                     '</div>' +
                     '<div class="col-md-5">' +
@@ -451,6 +483,7 @@ body {
                             '<dl><dt>주문자 ID</dt><dd>' + order.userId + '</dd></dl>' +
                             '<dl><dt>주문 일시</dt><dd>' + order.orderDate + '</dd></dl>' +
                             '<dl><dt>결제 수단</dt><dd>' + order.paymentMethod + '</dd></dl>' +
+                            '<dl><dt>마일리지 사용</dt><dd>' + order.usedMileage + 'P</dd></dl>' +
                             '<dl><dt>결제 금액</dt><dd><strong>' + order.totalPrice + '원</strong></dd></dl>' +
                         '</div>' +
                         '<div class="detail-section bg-light p-3 rounded">' +
@@ -463,13 +496,57 @@ body {
                     '</div>' +
                 '</div>';
 
+                
+            document.getElementById('refundApproveBtn').addEventListener('click', handleRefund);
             document.getElementById('orderDetailModalLabel').textContent = "주문 상세 정보 (주문번호: "+deliveryId+")";
-            
             const orderModal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
             orderModal.show();
-
+            
         } catch (error) {
             alert("오류가 발생했습니다.");
+        }
+    }
+    
+    async function handleRefund(event) {
+        // event.currentTarget에서 data 속성 값을 가져옴
+        const button = event.currentTarget;
+        const userId = button.dataset.userId;
+        const usedMileage = parseInt(button.dataset.usedMileage, 10);
+
+        if (!confirm('사용자('+userId+')에게 '+usedMileage.toLocaleString()+'P를 환불하시겠습니까?')) {
+            return;
+        }
+
+        // 서버로 보낼 데이터 객체 생성
+        const refundData = {
+            userId: userId,
+            usedMileage: usedMileage // 환불할 마일리지
+        };
+
+        try {
+            const response = await fetch(contextPath+'/admin/refund', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(refundData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // 예: "마일리지 환불 처리가 성공적으로 완료되었습니다."
+                // 성공 시 모달 닫기
+                alert('환불되었습니다.')
+                const orderModal = bootstrap.Modal.getInstance(document.getElementById('orderDetailModal'));
+                orderModal.hide();
+            } else {
+                // 서버에서 보낸 에러 메시지 표시
+                alert('환불 처리 실패: '+result.message);
+            }
+        } catch (error) {
+            console.error("Refund request failed:", error);
+            alert("환불 처리 중 통신 오류가 발생했습니다.");
         }
     }
     </script>

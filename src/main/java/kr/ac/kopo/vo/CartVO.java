@@ -19,4 +19,5 @@ public class CartVO {
 	private int price;
 	private int discountPrice;
 	private int discountPercent;
+	private String imgSrc;
 }

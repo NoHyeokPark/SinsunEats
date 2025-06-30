@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.servlet.http.HttpSession;
 import kr.ac.kopo.service.KakaoService;
+import kr.ac.kopo.service.MemberService;
+import kr.ac.kopo.vo.KakaoTokenHolderVO;
 import kr.ac.kopo.vo.MemberVO;
 
 @Controller
@@ -20,11 +22,16 @@ public class KakaoController {
 
 	@Autowired
 	private KakaoService kakaoService; // 비즈니스 로직을 처리할 서비스 주입
+	
+	@Autowired
+	private MemberService ms;
+
+
 
 	@GetMapping("/kakao")
 	public String kakaoLogin() {
 		String reqUrl = "https://kauth.kakao.com/oauth/authorize?client_id=" + KAKAO_CLIENT_ID + "&redirect_uri="
-				+ KAKAO_REDIRECT_URI + "&response_type=code";
+				+ KAKAO_REDIRECT_URI + "&response_type=code" + "&scope=talk_message";
 		return "redirect:" + reqUrl;
 	}
 
@@ -49,8 +56,13 @@ public class KakaoController {
 	            String kakaoId = "Kakao_" + id;
 	            user.setId(""+id);
 	            user.setName(kakaoId);
+	            MemberVO kuser = ms.apiLogin(user);
 	            session.setAttribute("access_token", accessToken); // 로그아웃 시 필요할 수 있음
-	            session.setAttribute("user", user);
+	            	
+	            if (kuser == null) {
+	            	return "redirect:/signup"; 
+	            }
+	            session.setAttribute("user", kuser);
 	            
 
 	        } catch (Exception e) {

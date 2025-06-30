@@ -8,6 +8,9 @@ public class GoodsVO {
 	private int discountPrice;
 	private String foodName;
 	private String foodDiv;
+	private String imgSrc;
+	private double averageRating;
+	private int reviewCount; 
 
 	public GoodsVO() {
 		// TODO Auto-generated constructor stub
@@ -79,6 +82,31 @@ public class GoodsVO {
 	public void setFoodDiv(String foodDiv) {
 		this.foodDiv = foodDiv;
 	}
+
+	public String getImgSrc() {
+		return imgSrc;
+	}
+
+	public void setImgSrc(String imgSrc) {
+		this.imgSrc = imgSrc;
+	}
+
+	public double getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(double averageRating) {
+		this.averageRating = averageRating;
+	}
+
+	public int getReviewCount() {
+		return reviewCount;
+	}
+
+	public void setReviewCount(int reviewCount) {
+		this.reviewCount = reviewCount;
+	}
+	
 	
 	
 

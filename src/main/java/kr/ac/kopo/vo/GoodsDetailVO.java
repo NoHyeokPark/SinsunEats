@@ -21,4 +21,6 @@ public class GoodsDetailVO {
 	private int discountPercent;
 	private int discountPrice;
 	private String foodName;
+	private String imgSrc;
+	private String contentSrc;
 }

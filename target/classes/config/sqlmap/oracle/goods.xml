@@ -6,19 +6,28 @@
 
 <select id="top8" resultMap="goods">
 select *
-from (
-select food_code, brand, price, 
-       discount_Percent, food_name
-from food_item
-order by discount_percent desc
+FROM (
+    SELECT fi.food_code AS food_code,
+           brand,
+           price,
+           discount_percent,
+           food_name,
+           img_src AS imgSrc,
+           COUNT(grade) AS reviewCount,
+           ROUND(AVG(grade), 1) AS averageRating
+    FROM food_item fi
+    LEFT JOIN food_review fr ON fi.food_code = fr.food_code
+    GROUP BY fi.food_code, brand, price, discount_percent, food_name, img_src
+    ORDER BY discount_percent DESC
 )
 where rownum &lt; 9
 </select>
 
 <select id="all" resultMap="goods" parameterType="map">
-select food_code, brand, price, 
-       discount_Percent, food_name
-from food_item
+select fi.food_code AS food_code, brand, price, 
+       discount_Percent, food_name, img_src as imgSrc , COUNT(grade) AS reviewCount, ROUND(AVG(grade), 1) AS averageRating
+FROM food_item fi
+    LEFT JOIN food_review fr ON fi.food_code = fr.food_code
   <where>
     <if test="filter != null and filter != ''">
       category_id = #{filter}
@@ -27,12 +36,13 @@ from food_item
       AND food_name LIKE '%' || #{keyword} || '%'
     </if>
  </where>
+GROUP BY fi.food_code, brand, price, discount_percent, food_name, img_src 
 order by food_code
-OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+OFFSET #{offset} ROWS FETCH NEXT 10 ROWS ONLY
 </select>
 
 <select id="detail" resultMap="gtail" parameterType="String">
-select stock, detail_description, storage_method, shipping_fee, product_notice, price, discount_Percent, food_Name, fd.food_code
+select stock, detail_description, storage_method, shipping_fee, product_notice, price, discount_Percent, food_Name, fd.food_code, img_src as imgSrc, content_src as contentSrc
 from food_details fd join food_item fi on fd.food_code = fi.food_code
 where fd.food_code = #{s}
 </select>
@@ -41,6 +51,15 @@ where fd.food_code = #{s}
 select distinct food_div as foodDiv, category_id
 from food_item
 order by category_id
+</select>
+
+<select id="nut" resultType="kr.ac.kopo.vo.nutritionVO" parameterType="String">
+select nntransfattyacids_g nntransfattyacidsG, 
+weight, energy_kcal energyKcal, protein_g proteinG, fat_g fatG, carbohydrate_g carbohydrateG, 
+nnsugars_g nnsugarsG, nnsodium_mg nnsodiumMg, nncholesterol_mg nncholesterolMg,
+nnsaturatedfattyacids_g nnsaturatedfattyacidsG
+from food
+where food_code = #{s}
 </select>
 
 <resultMap type="gvo" id="goods">

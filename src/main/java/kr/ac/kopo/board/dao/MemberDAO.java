@@ -9,4 +9,8 @@ public interface MemberDAO {
 	MemberVO login(MemberVO m);
 	
 	void logout();
+	
+	MemberVO apiLogin(MemberVO m);
+	
+	void useMileage(MemberVO m);
 }

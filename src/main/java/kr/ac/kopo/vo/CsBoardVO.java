@@ -18,5 +18,6 @@ public class CsBoardVO {
 	private String regDate;
 	private String tel;
 	private String answer;
+	private int orderReference;
 
 }

@@ -24,6 +24,9 @@ public class MemberController {
 		MemberVO ma = ms.login(m);
 		if(ma != null) {
 			session.setAttribute("user", ma);
+			if(ma.getType() == "S") {
+				return "redirect:/admin/main";
+			}
 		}
 		return "redirect:/home";
 	}

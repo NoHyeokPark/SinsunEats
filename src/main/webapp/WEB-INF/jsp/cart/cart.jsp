@@ -172,8 +172,8 @@
 		</div>
 
 		<div class="cart-layout">
-		
-		
+
+
 			<!-- 장바구니 아이템 영역 -->
 			<div class="cart-items">
 
@@ -188,8 +188,8 @@
 							onclick="deleteSelected()" type="button">선택삭제</button>
 					</div>
 				</div>
-				
-				
+
+
 				<!-- 장바구니가 비어있을 때 -->
 				<div class="empty-cart" id="empty-cart" style="display: none;">
 					<div class="empty-cart-icon">🛒</div>
@@ -199,15 +199,14 @@
 						onclick="location.href='${pageContext.request.contextPath}/goods?no=1'">쇼핑
 						계속하기</button>
 				</div>
-				
-				
+
+
 				<!-- 샘플 장바구니 아이템들 -->
 				<c:forEach items="${carts}" var="i" varStatus="loop">
 					<div class="cart-item" data-cart-id="${i.cartId}"
 						data-price="${i.discountPrice}">
 						<input type="checkbox" class="item-checkbox item-select" checked
-							data-cart-id="${i.isSelected}"> <img
-							src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=1974&auto=format&fit=crop"
+							data-cart-id="${i.isSelected}"> <img src="${i.imgSrc}"
 							alt="음식 이미지" class="item-image">
 						<div class="item-details">
 							<div class="item-name">${i.foodName}</div>
@@ -248,8 +247,32 @@
 				</div>
 				<div
 					style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-					<span>배송비:</span> <span>무료</span>
+					<span>배송비:</span> <span id="shipping-price">무료</span>
 				</div>
+				<hr>
+				<div class="mileage-section">
+					<div
+						style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+						<span>보유 마일리지</span>
+						<!-- 서버에서 받은 사용자 마일리지를 표시하고, JS에서 쉽게 접근할 수 있도록 ID 부여 -->
+						<span style="font-weight: bold;"><span
+							id="user-available-mileage">${user.mileage}</span> P</span>
+					</div>
+					<div style="display: flex; gap: 10px; margin-bottom: 10px;">
+						<input type="number" id="mileage-input" class="quantity-input"
+							placeholder="마일리지 입력" style="flex-grow: 1;">
+						<button id="apply-mileage-btn"
+							class="product-card add-to-cart-btn" type="button" onclick="applyMileage()">적용</button>
+					</div>
+					<button id="use-all-mileage-btn" class="btn"
+						style="width: 100%; background-color: #6c757d; margin-bottom: 10px;" onclick="useAllMileage()">전액
+						사용</button>
+				</div>
+				<div
+					style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #dc3545;">
+					<span>마일리지 할인:</span> <span id="mileage-discount">- 0원</span>
+				</div>
+
 				<hr>
 				<div
 					style="display: flex; justify-content: space-between; font-size: 1.2em; font-weight: bold; color: #28a745;">
@@ -270,6 +293,9 @@
 	</footer>
 
 	<script>
+	
+	let availableMileage = ${user.mileage}; // 사용 가능 마일리지
+	let usedMileage = 0;      // 현재 적용된 마일리지
 	// 페이지 로드 시 초기 합계 계산
 	document.addEventListener('DOMContentLoaded', function() {
 		updateSummary();
@@ -312,6 +338,54 @@
 		      if (!r.ok) throw new Error('fail');
 		  }).catch(console.error);
 		}
+	
+	/**
+	 * [신규] 보유 마일리지를 전액 사용하는 함수
+	 */
+	function useAllMileage() {
+	    const PriceText = document.getElementById('total-price').textContent;
+	    const shipPriceText = document.getElementById('shipping-price').textContent;
+	    const currentTotalPrice = parseInt(PriceText.replace(/[^0-9]/g, ''), 10) + parseInt(shipPriceText.replace(/[^0-9]/g, ''), 10);
+	 
+	    
+	    // 사용 가능한 최대 마일리지 = 보유 마일리지와 상품금액 중 더 작은 값
+	    const maxApplicableMileage = Math.min(availableMileage, currentTotalPrice);
+
+	    usedMileage = maxApplicableMileage;
+	    document.getElementById('mileage-input').value = usedMileage; // 입력창에도 반영
+	    updateSummary(); // 요약 정보 다시 계산
+	}
+	
+	function applyMileage() {
+	    const mileageInput = document.getElementById('mileage-input');
+	    const PriceText = document.getElementById('total-price').textContent;
+	    const shipPriceText = document.getElementById('shipping-price').textContent;
+	    const currentTotalPrice = parseInt(PriceText.replace(/[^0-9]/g, ''), 10) + parseInt(shipPriceText.replace(/[^0-9]/g, ''), 10);
+	    let mileageToUse = parseInt(mileageInput.value, 10);
+
+	    // 유효성 검사
+	    if (isNaN(mileageToUse) || mileageToUse < 0) {
+	        alert('올바른 마일리지 값을 입력해주세요.');
+	        mileageInput.value = '';
+	        return;
+	    }
+	    if (mileageToUse > availableMileage) {
+	        alert('보유 마일리지를 초과할 수 없습니다. (보유: '+availableMileage.toLocaleString()+' P)');
+	        mileageInput.value = availableMileage;
+	        return;
+	    }
+	    if (mileageToUse > currentTotalPrice) {
+	        alert('상품 금액('+currentTotalPrice.toLocaleString()+'원)을 초과하여 사용할 수 없습니다.');
+	        mileageInput.value = currentTotalPrice;
+	        return;
+	    }
+	    
+	    // 검증 통과 후 마일리지 적용
+	    usedMileage = mileageToUse;
+	    alert(usedMileage.toLocaleString()+' P 마일리지가 적용되었습니다.');
+	    
+	    updateSummary(); // 요약 정보 다시 계산
+	}
 
 	/**
 	 * 주문 요약 정보를 업데이트하는 함수
@@ -335,12 +409,16 @@
 
 		// 숫자를 한국 통화 형식으로 포맷
 		const formatCurrency = (amount) => new Intl.NumberFormat('ko-KR').format(amount) + '원';
-		
-		//consol.log(selectedCount + ":::" + totalPrice)
+		// === [수정] 마일리지 유효성 검사 및 조정 ===
+	    // 상품 금액이 바뀌었을 때, 적용된 마일리지가 상품 금액을 초과하지 않도록 조정
 
+		//consol.log(selectedCount + ":::" + totalPrice)
+		let ship = totalPrice >= 30000 ? 0 : 3000;
 		document.getElementById('selected-count').textContent = selectedCount + '개';
 		document.getElementById('total-price').textContent = formatCurrency(totalPrice);
-		document.getElementById('final-price').textContent = formatCurrency(totalPrice); // 배송비가 무료이므로 최종 금액도 동일하게 설정
+		document.getElementById('shipping-price').textContent = formatCurrency(ship);
+		document.getElementById('mileage-discount').textContent = usedMileage + '원';
+		document.getElementById('final-price').textContent = formatCurrency(totalPrice + ship - usedMileage); // 배송비가 무료이므로 최종 금액도 동일하게 설정
 
 		// 장바구니가 비어있는지 확인
 		checkEmptyCart();
@@ -377,6 +455,7 @@
 				if(data.success) {
 					console.log('수량이 성공적으로 변경되었습니다.');
 					location.reload();
+					
 				}
 			});
 		 
@@ -391,6 +470,7 @@
 	
 
 		updateSummary();
+		quantityInput.value = newQuantity;
 		
 	}
 
@@ -422,7 +502,8 @@
 				.then(data => {
 					if(data.success) {
 						alert('아이템이 성공적으로 삭제되었습니다.');
-						location.reload();
+		                document.querySelector(`.cart-item[data-cart-id='${cartNum}']`).remove();
+		                updateSummary(); // 요약 정보 업데이트
 					}
 				});
 			
@@ -506,6 +587,12 @@
 	        input.value = cartItem.dataset.cartId;
 	        form.appendChild(input);
 	    });
+	    
+	    const mileageInput = document.createElement('input');
+	    mileageInput.type = 'hidden';
+	    mileageInput.name = 'usedMileage';
+	    mileageInput.value = usedMileage;  
+	    form.appendChild(mileageInput);
 
 	    document.body.appendChild(form);
 	    form.submit();

@@ -12,10 +12,10 @@
         SELECT seq_delivery.NEXTVAL FROM dual
     </selectKey>
 
-    INSERT INTO delivery (DELIVERY_ID, USER_ID, RECIPIENT_NAME, RECIPIENT_PHONE, ADDRESS, ADDRESS_DETAIL, POST_CODE, TOTAL_PRICE, PAYMENT_METHOD
+    INSERT INTO delivery (DELIVERY_ID, USER_ID, RECIPIENT_NAME, RECIPIENT_PHONE, ADDRESS, ADDRESS_DETAIL, POST_CODE, TOTAL_PRICE, PAYMENT_METHOD, used_mileage
     )
     VALUES (#{deliveryId}, #{userId}, #{recipientName}, #{recipientPhone}
-    , #{address}, #{addressDetail}, #{postCode}, #{totalPrice}, #{paymentMethod}
+    , #{address}, #{addressDetail}, #{postCode}, #{totalPrice}, #{paymentMethod}, #{usedMileage}
     )
 </insert>
 
@@ -51,11 +51,17 @@ where delivery_Id = #{deliveryId}
 <select id="selectOne" parameterType="kr.ac.kopo.vo.OrderVO" resultType="kr.ac.kopo.vo.OrderVO">
 select DELIVERY_ID deliveryId, USER_ID userId, ORDER_DATE orderDate, RECIPIENT_NAME recipientName
 , RECIPIENT_PHONE recipientPhone, ADDRESS address, ADDRESS_DETAIL addressDetail, 
-POST_CODE postCode, TOTAL_PRICE totalPrice, PAYMENT_METHOD paymentMethod
+POST_CODE postCode, TOTAL_PRICE totalPrice, PAYMENT_METHOD paymentMethod, used_mileage usedMileage
 from delivery
 where delivery_Id = #{deliveryId}
 </select>
 
-
+<select id="selectCsOVO" resultType="kr.ac.kopo.vo.OrderVO" parameterType="String">
+select DELIVERY_ID deliveryId, USER_ID userId, ORDER_DATE orderDate, RECIPIENT_NAME recipientName
+, RECIPIENT_PHONE recipientPhone, ADDRESS address, ADDRESS_DETAIL addressDetail, 
+POST_CODE postCode, TOTAL_PRICE totalPrice, PAYMENT_METHOD paymentMethod, used_mileage usedMileage
+from delivery
+where user_id = #{a}
+</select>
 
 </mapper>

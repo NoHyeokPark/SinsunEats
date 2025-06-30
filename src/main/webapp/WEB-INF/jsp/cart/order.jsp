@@ -230,10 +230,15 @@
                             <dt>배송비</dt>
                             <dd><fmt:formatNumber value="${shippingFee}" pattern="#,##0" />원</dd>
                         </dl>
+                        <dl>
+                            <dt>마일리지</dt>
+                            <dd><fmt:formatNumber value="-${usedMileage}" pattern="#,##0" />P</dd>
+                            <input type="hidden" name="usedMileage" value="${usedMileage}" />
+                        </dl>
                          <dl class="total">
                             <dt>총 결제금액</dt>
-                            <dd><fmt:formatNumber value="${finalPrice}" pattern="#,##0" />원</dd>
-                            <input type="hidden" name="totalPrice" value="${finalPrice}" />
+                            <dd><fmt:formatNumber value="${finalPrice-usedMileage}" pattern="#,##0" />원</dd>
+                            <input type="hidden" name="totalPrice" value="${finalPrice-usedMileage}" />
                         </dl>
                     </div>
 
@@ -243,7 +248,7 @@
                     </div>
 
                     <button type="submit" class="btn-checkout">
-                        <fmt:formatNumber value="${finalPrice}" pattern="#,##0" />원 결제하기
+                        <fmt:formatNumber value="${finalPrice-usedMileage}" pattern="#,##0" />원 결제하기
                     </button>
                 </section>
             </div>
@@ -266,7 +271,7 @@
                     } else {
                         addr = data.jibunAddress;
                     }
-                    document.getElementById('post').value = data.zonecode;
+                    document.getElementById('postCode').value = data.zonecode;
                     document.getElementById("address").value = addr;
                     document.getElementById("addressDetail").focus();
                 }

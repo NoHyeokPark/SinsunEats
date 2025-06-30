@@ -108,7 +108,7 @@ body {
 			<button class="btn"
 				style="background-color: var(--admin-primary-color);"
 				data-bs-toggle="modal" data-bs-target="#popupModal"
-				onclick="openPopupModal('new')">+ 새 공지 등록</button>
+				onclick="openPopupModal()">+ 새 공지 등록</button>
 		</div>
 
 		<div class="table-responsive shadow-sm"
@@ -126,13 +126,13 @@ body {
 					</tr>
 				</thead>
 				<tbody id="popup-list-body">
-					
+
 					<c:forEach items="${ popupList}" var="pop" varStatus="loop">
 						<tr>
 							<td>${loop.count}</td>
 							<td>${pop.title }</td>
 							<td>${pop.regDate }</td>
-							<td>${pop.startDate }~ ${pop.endDate }</td>
+							<td>${pop.startDate }~${pop.endDate }</td>
 							<td><c:choose>
 									<c:when test="${pop.processed == 0 }">
 										<span class="status-badge scheduled">예정</span>
@@ -148,7 +148,8 @@ body {
 								<div
 									class="form-check form-switch d-flex justify-content-center">
 
-									<input class="form-check-input popup-status-switch" type="checkbox" role="switch" data-id="${pop.id}"
+									<input class="form-check-input popup-status-switch"
+										type="checkbox" role="switch" data-id="${pop.id}"
 										<c:if test="${pop.isPopup == 'Y'}">
 								checked
 								</c:if>>
@@ -158,12 +159,10 @@ body {
 								<button class="btn btn-sm btn-outline-primary"
 									data-bs-toggle="modal" data-bs-target="#popupModal"
 									data-id="${pop.id}" data-title="<c:out value='${pop.title}'/>"
-									data-content="<c:out value='${pop.content}'/>"
-									data-startDate="${pop.startDate}"
-									data-endDate="${pop.endDate}" data-isPopup="${pop.isPopup}"
-									onclick="openPopupModal(this)">수정</button>
-								 <button class="btn btn-sm btn-outline-danger btn-delete"
-                        data-id="${pop.id}">삭제</button> 
+									data-startDate="${pop.startDate}" data-endDate="${pop.endDate}"
+									data-isPopup="${pop.isPopup}" onclick="openPopupModal(this)">수정</button>
+								<button class="btn btn-sm btn-outline-danger btn-delete"
+									data-id="${pop.id}">삭제</button>
 							</td>
 						</tr>
 					</c:forEach>
@@ -183,16 +182,19 @@ body {
 						aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="popupForm" action="${pageContext.request.contextPath}/admin/popup/save" method="post">
+					<form id="popupForm"
+						action="${pageContext.request.contextPath}/admin/popup/save"
+						method="post" enctype="multipart/form-data">
 						<input type="hidden" name="id">
 						<div class="mb-3">
 							<label class="form-label">제목*</label> <input type="text"
-								class="form-control" name="title" required>
+								class="form-control" name="title" >
 						</div>
 						<div class="mb-3">
-							<label class="form-label">내용</label>
-							<textarea class="form-control" name="content" rows="8"
-								placeholder="이미지 배너의 경우, 이미지 URL을 입력할 수 있습니다."></textarea>
+							<label class="form-label">팝업 이미지*</label> <input type="file"
+								class="form-control" name="popupImageFile" accept="image/*"
+								> <small class="form-text text-muted">팝업으로
+								표시될 이미지를 선택하세요.</small>
 						</div>
 						<div class="row mb-3">
 							<div class="col-md-6">
@@ -203,12 +205,6 @@ body {
 								<label class="form-label">게시 종료일*</label> <input type="date"
 									class="form-control" name="endDate" required>
 							</div>
-						</div>
-						<div class="form-check form-switch mb-3">
-							<input class="form-check-input" type="checkbox" role="switch"
-								id="isPopupSwitch" name="isPopup" value="Y"> <label
-								class="form-check-label" for="isPopupSwitch">메인 페이지에
-								팝업으로 노출하기</label>
 						</div>
 					</form>
 				</div>
@@ -243,18 +239,16 @@ body {
 	            // 추출한 데이터로 폼 채우기
 	            document.querySelector('#popupForm [name="id"]').value = data.id;
 	            document.querySelector('#popupForm [name="title"]').value = data.title;
-	            document.querySelector('#popupForm [name="content"]').value = data.content;
 	            
-	            const startDateFormatted = formatDateToInput(data.startdate);
-	            const endDateFormatted = formatDateToInput(data.enddate);
+	            const startDateFormatted = formatDateToInput(data.startDate);
+	            const endDateFormatted = formatDateToInput(data.endDate);
 	            document.querySelector('#popupForm [name="startDate"]').value = startDateFormatted;
 	            document.querySelector('#popupForm [name="endDate"]').value = endDateFormatted;
-	            document.getElementById('isPopupSwitch').checked = (data.isPopup === 'Y');
 
 	        } else { // '새 등록' 모드
 	            modalLabel.textContent = '새 팝업 등록';
 	            // id 필드는 비워두거나 0으로 설정 (새 등록이므로)
-	            document.querySelector('#popupForm [name="id"]').value = ''; 
+	            document.querySelector('#popupForm [name="id"]').value = null; 
 	        }
 	    }
 		
@@ -270,38 +264,22 @@ body {
 
 		            // 2. 폼 데이터 객체로 변환
 		            const formData = new FormData(popupForm);
-		            const data = {};
-		            // FormData의 각 필드를 일반 객체로 변환 (JSON으로 보내기 위함)
-		            formData.forEach((value, key) => {
-		                data[key] = value;
-		            });
-		            
-		            // 'isPopup' 체크박스 값 처리: 체크 안되면 'N'
-		            if (!data.isPopup) {
-		                data.isPopup = 'N';
-		            }
-		            
-		            const popupId = data.id;
-		            let method = '';
+	
+
+		            const popupId = formData.get('id');
 		            let url = '';
 
-		            if (popupId) {
-		                // ID가 있으면 '수정' (UPDATE)
-		              
-		                url = '/admin/popup/update'; 
+		            if (popupId && popupId.trim() !== ''&& popupId !== 'null') {
+		                // ID가 있으면 '수정'
+		                url = '/admin/popup/update';
 		            } else {
-		                // ID가 없으면 '등록' (INSERT)
-		          
-		                url = '/admin/popup/save'; 
+		                // ID가 없으면 '등록'
+		                url = '/admin/popup/save';
 		            }
-		            
 		            // 3. fetch API를 사용해 데이터 서버로 전송
 		            fetch(ctx+url, {
 		                method: 'POST',
-		                headers: {
-		                    'Content-Type': 'application/json',
-		                },
-		                body: JSON.stringify(data),
+		                body: formData,
 		            })
 		            .then(response => {
 		                if (!response.ok) {

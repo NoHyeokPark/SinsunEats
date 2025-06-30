@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
+import kr.ac.kopo.service.CartService;
 import kr.ac.kopo.service.CsService;
+import kr.ac.kopo.service.KakaoService;
 import kr.ac.kopo.vo.CsBoardVO;
 import kr.ac.kopo.vo.MemberVO;
 
@@ -19,6 +21,12 @@ public class CsControllrer {
 	
 	@Autowired
 	private CsService css;
+	
+	@Autowired
+	private KakaoService ks;
+	
+	@Autowired
+	private CartService cartService;
 	
 	@GetMapping("/cs")
 	public String info() {
@@ -43,12 +51,14 @@ public class CsControllrer {
 	}
 	
 	@GetMapping("/cs/write")
-	public String write() {
+	public String write(HttpSession session, Model model) {
+		MemberVO vo = (MemberVO) session.getAttribute("user");
+		model.addAttribute("order", cartService.list(vo.getId()));
 		return "cs/write";
 	}
 	
 	@PostMapping("/cs/write")
-	public String writePost(@RequestParam("category") String category,
+	public String writePost(HttpSession session, @RequestParam("orderReference") int orderReference, @RequestParam("category") String category,
             @RequestParam("title") String title,
             @RequestParam("writer") String writer,
             @RequestParam("content") String content,
@@ -60,6 +70,9 @@ public class CsControllrer {
 		cs.setTel(tel);
 		cs.setTitle(title);
 		cs.setWriter(writer);
+		cs.setOrderReference(orderReference);
+		String token = (String) session.getAttribute("access_token");
+		ks.sendAlam(token, category ,title);
 		css.write(cs);
 		return "redirect:/cs/list";
 	}

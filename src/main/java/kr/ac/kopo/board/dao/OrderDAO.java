@@ -13,4 +13,5 @@ public interface OrderDAO {
 	public void invoUpdate(OrderVO order);
 	public List<OrderDetailVO> selectDetail(OrderVO order);
 	public OrderVO selectOne(OrderVO order);
+	public List<OrderVO> selectCs(String id);
 }

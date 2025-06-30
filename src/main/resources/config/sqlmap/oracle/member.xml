@@ -13,10 +13,21 @@
 
 <!-- 로그인 -->
 <select id="login" resultType="userVO" parameterType="userVO">
-select id, name, password, email_id as emailId, email_domain as emailDomain, tel1, tel2, tel3, post, basic_addr as basicAddr, detail_addr as DetailAddr, type, reg_date as regDate
+select id, name, password, email_id as emailId, email_domain as emailDomain, tel1, tel2, tel3, post, basic_addr as basicAddr, detail_addr as DetailAddr, type, reg_date as regDate, mileage
 from MEMBERs
 where id = #{id} and password = #{password}
 </select>
 
+<select id="loginApi" resultType="userVO" parameterType="userVO">
+select id, name, password, email_id as emailId, email_domain as emailDomain, tel1, tel2, tel3, post, basic_addr as basicAddr, detail_addr as DetailAddr, type, reg_date as regDate, mileage
+from MEMBERs
+where id = #{id}
+</select>
+
+<update id="mileage" parameterType="userVO">
+update MEMBERs
+set mileage =  mileage + #{mileage}
+where id = #{id}
+</update>
 
 </mapper>

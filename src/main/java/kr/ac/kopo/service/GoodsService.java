@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import kr.ac.kopo.board.dao.GoodsDAO;
 import kr.ac.kopo.vo.GoodsDetailVO;
 import kr.ac.kopo.vo.GoodsVO;
+import kr.ac.kopo.vo.ReviewVO;
+import kr.ac.kopo.vo.nutritionVO;
 
 @Service
 public class GoodsService {
@@ -34,6 +36,11 @@ public class GoodsService {
 		return gdv;
 	}
 	
+	public nutritionVO nutrition(String code) {
+		
+		return b.selectNutrition(code);
+	}
+	
 	private void discount(List<GoodsVO> goods) {
 		//{Math.floor((i.price * (100 - i.discountPercent) / 100) / 100) * 100}
 		for (GoodsVO good : goods) {
@@ -43,6 +50,11 @@ public class GoodsService {
 	
 	public List<GoodsVO> div() {
 		return b.selectAllDiv();
+	}
+	
+	public List<ReviewVO> reviewList(String code){
+		return b.selectReview(code);
+		
 	}
 	
 }

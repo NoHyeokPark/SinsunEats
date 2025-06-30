@@ -93,7 +93,9 @@
     <form action="${pageContext.request.contextPath}/signup" method="post">
       <label for="id">아이디</label>
       <input type="text" id="id" name="id" maxlength="20"
-      <c:if test=""></c:if>
+      <c:if test="${not empty user}">
+      value = ${user.id }
+      </c:if>
       
        required>
 

@@ -152,7 +152,7 @@ body {
 							<div id="inquiry-${loop.count}" class="accordion-collapse collapse"
 								data-bs-parent="#inquiryAccordion">
 								<div class="accordion-body">
-									<strong>문의 내용:</strong>
+									<strong>문의 내용: <a href="${pageContext.request.contextPath}/admin/order?no=${board.orderReference}" target="_blank"> 바로가기 </a></strong>
 									<p class="border p-3 rounded bg-light">${board.content }</p>
 									<div class="answer-form mt-3" id="answer-form-${board.no}" style="${not empty board.answer ? 'display:none;' : ''}">
 										<h5>답변 작성</h5>

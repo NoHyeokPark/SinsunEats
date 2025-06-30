@@ -7,26 +7,28 @@
 <insert id="write" parameterType="kr.ac.kopo.vo.CsBoardVO">
 	insert into cs_board
 		 (no, category, title, writer,
-				content, <if test="fileRef != null and fileRef != ''">file_ref,</if> tel) 
-		 values(customer_cs_seq.nextval, #{category}, #{title}, #{writer}, #{content} , <if test="fileRef != null and fileRef != ''">#{fileRef},</if> #{tel}) 
+				content, <if test="fileRef != null and fileRef != ''">file_ref,</if> tel 
+				<if test="orderReference != null and orderReference != ''">,order_Reference</if>) 
+		 values(customer_cs_seq.nextval, #{category}, #{title}, #{writer}, #{content} , <if test="fileRef != null and fileRef != ''">#{fileRef},
+		 </if>#{tel} <if test="orderReference != null and orderReference != ''">,#{orderReference}</if>) 
 </insert>
 
 
 <select id="all" resultType="kr.ac.kopo.vo.CsBoardVO" parameterType="String">
-select no, status, category, title, writer, reg_date as regDate, tel,  content, answer
+select no, status, category, title, writer, reg_date as regDate, tel,  content, answer , order_Reference orderReference
 from cs_board
 where writer = #{id}
 order by status, regDate desc
 </select>
 
 <select id="allAll" resultType="kr.ac.kopo.vo.CsBoardVO" >
-select no, status, category, title, writer, reg_date as regDate, tel, content, answer
+select no, status, category, title, writer, reg_date as regDate, tel, content, answer, order_Reference orderReference
 from cs_board
 order by status, regDate desc
 </select>
 
 <select id="one" resultType="kr.ac.kopo.vo.CsBoardVO" parameterType="int">
-select no, status, category, title, writer, reg_date as regDate, tel,  content, answer
+select no, status, category, title, writer, reg_date as regDate, tel,  content, answer, order_Reference orderReference
 from cs_board
 where no = #{no}
 </select>
