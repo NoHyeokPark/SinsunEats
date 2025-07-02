@@ -58,7 +58,7 @@ public class CsControllrer {
 	}
 	
 	@PostMapping("/cs/write")
-	public String writePost(HttpSession session, @RequestParam("orderReference") int orderReference, @RequestParam("category") String category,
+	public String writePost(HttpSession session, @RequestParam(value="orderReference", defaultValue = "0") int orderReference, @RequestParam("category") String category,
             @RequestParam("title") String title,
             @RequestParam("writer") String writer,
             @RequestParam("content") String content,

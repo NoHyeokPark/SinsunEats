@@ -57,4 +57,10 @@ public class GoodsDAOimpl implements GoodsDAO {
 		return sql.selectList("review.list", code);
 	}
 	
+	@Override
+	public void reviewIn(ReviewVO r) {
+		sql.insert("review.in", r);
+		
+	}
+	
 }

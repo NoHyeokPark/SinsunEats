@@ -14,4 +14,5 @@ public interface GoodsDAO {
 	List<GoodsVO> selectAllDiv();
 	nutritionVO selectNutrition(String code);
 	List<ReviewVO> selectReview(String code);
+	void reviewIn(ReviewVO r);
 }

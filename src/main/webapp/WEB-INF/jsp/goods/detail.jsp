@@ -162,7 +162,7 @@
 </style>
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/include/quik.jsp"></jsp:include>
 	<header>
 		<jsp:include page="/WEB-INF/jsp/include/topmenu.jsp"></jsp:include>
 	</header>
@@ -376,6 +376,8 @@
 				</c:forEach>
 			</div>
 		</div>
+		
+		<%@ include file="/WEB-INF/jsp/include/review.jsp"%>
 
 		<!-- 추천 상품 -->
 		<div class="section">
@@ -477,39 +479,39 @@ document.addEventListener('DOMContentLoaded', function() {
             const sodiumDV = calculateDV(data.NNSODIUM_MG, dailyValues.NNSODIUM_MG);
             document.getElementById('sodium-mg').textContent = (data.NNSODIUM_MG || 0) + 'mg';
             document.getElementById('sodium-dv').textContent = sodiumDV + '%';
-            document.getElementById('sodium-bar').style.width = sodiumDV + '%';
+            document.getElementById('sodium-bar').style.width = sodiumDV *2 + '%';
 
             const carbsDV = calculateDV(data.CARBOHYDRATE_G, dailyValues.CARBOHYDRATE_G);
             document.getElementById('carbs-g').textContent = (data.CARBOHYDRATE_G || 0) + 'g';
             document.getElementById('carbs-dv').textContent = carbsDV + '%';
-            document.getElementById('carbs-bar').style.width = carbsDV + '%';
+            document.getElementById('carbs-bar').style.width = carbsDV *2 + '%';
             
             const sugarsDV = calculateDV(data.NNSUGARS_G, dailyValues.NNSUGARS_G);
             document.getElementById('sugars-g').textContent = (data.NNSUGARS_G || 0) + 'g';
             document.getElementById('sugars-dv').textContent = sugarsDV + '%';
-            document.getElementById('sugars-bar').style.width = sugarsDV + '%';
+            document.getElementById('sugars-bar').style.width = sugarsDV *2 + '%';
 
             const fatDV = calculateDV(data.FAT_G, dailyValues.FAT_G);
             document.getElementById('fat-g').textContent = (data.FAT_G || 0) + 'g';
             document.getElementById('fat-dv').textContent = fatDV + '%';
-            document.getElementById('fat-bar').style.width = fatDV + '%';
+            document.getElementById('fat-bar').style.width = fatDV *2 + '%';
 
             document.getElementById('transfat-g').textContent = (data.NNTRANSFATTYACIDS_G || 0) + 'g';
             
             const satfatDV = calculateDV(data.NNSATURATEDFATTYACIDS_G, dailyValues.NNSATURATEDFATTYACIDS_G);
             document.getElementById('satfat-g').textContent = (data.NNSATURATEDFATTYACIDS_G || 0) + 'g';
             document.getElementById('satfat-dv').textContent = satfatDV + '%';
-            document.getElementById('satfat-bar').style.width = satfatDV + '%';
+            document.getElementById('satfat-bar').style.width = satfatDV *2 + '%';
 
             const cholesterolDV = calculateDV(data.NNCHOLESTEROL_MG, dailyValues.NNCHOLESTEROL_MG);
             document.getElementById('cholesterol-mg').textContent = (data.NNCHOLESTEROL_MG || 0) + 'mg';
             document.getElementById('cholesterol-dv').textContent = cholesterolDV + '%';
-            document.getElementById('cholesterol-bar').style.width = cholesterolDV + '%';
+            document.getElementById('cholesterol-bar').style.width = cholesterolDV *2 + '%';
             
             const proteinDV = calculateDV(data.PROTEIN_G, dailyValues.PROTEIN_G);
             document.getElementById('protein-g').textContent = (data.PROTEIN_G || 0) + 'g';
             document.getElementById('protein-dv').textContent = proteinDV + '%';
-            document.getElementById('protein-bar').style.width = proteinDV + '%';
+            document.getElementById('protein-bar').style.width = proteinDV*2 + '%';
         }
         
         function renderReviewStars() {

@@ -280,6 +280,7 @@
 	href="${pageContext.request.contextPath}/reference/css/layout.css">
 </head>
 <body>
+<jsp:include page="/WEB-INF/jsp/include/quik.jsp"></jsp:include>
 	<header>
 		<jsp:include page="/WEB-INF/jsp/include/topmenu.jsp"></jsp:include>
 	</header>

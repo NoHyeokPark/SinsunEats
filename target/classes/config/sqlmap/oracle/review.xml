@@ -16,5 +16,10 @@ order by GRADE DESC
 where rownum &lt; 6
 </select>
 
-
+<insert id="in" parameterType="kr.ac.kopo.vo.ReviewVO">
+	insert into food_review
+		 (food_code, title, content,
+				writer, grade) 
+		 values(#{foodCode}, #{title}, #{content}, #{writer}, #{grade}) 
+</insert>
 </mapper>

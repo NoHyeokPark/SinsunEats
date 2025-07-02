@@ -94,7 +94,9 @@ public class KakaoService {
 
 		// template_object 생성 (JSON 형식의 문자열)
 		String templateObj = String.format(
-				"{\"object_type\":\"text\",\"text\":\"(신선잇츠) 문의글이 올라왔습니다! (%s), %s\",\"link\":{\"web_url\":\"%s/admin/cs\",\"mobile_web_url\":\"%s/admin/cs\"},\"button_title\":\"답변하러 가기\"}",
+				"{\"object_type\":\"text\",\"text\":\"(신선잇츠) 문의글이 올라왔습니다! (%s), %s\","
+				+ "\"link\":{\"web_url\":\"%s/admin/cs\",\"mobile_web_url\":\"%s/admin/cs\"},"
+				+ "\"button_title\":\"답변하러 가기\"}",
 				category, title, CTX, CTX);
 
 		// 요청 본문(body) 생성

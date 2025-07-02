@@ -57,4 +57,9 @@ public class GoodsService {
 		
 	}
 	
+	public void reviewIn(ReviewVO r){
+		b.reviewIn(r);
+		
+	}
+	
 }

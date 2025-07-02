@@ -48,7 +48,7 @@ public class adminController {
 	@Autowired
 	private MemberService ms;
 
-	private String uploadDir = "D:\\OneDrive - 한국폴리텍대학\\study\\web-workspace\\Food-Shop-Spring\\src\\main\\webapp\\reference\\img";
+	private String uploadDir = "D:\\OneDrive - 한국폴리텍대학\\study\\eclipse-server\\wtpwebapps\\Food-Shop-Spring\\reference\\img";
 
 	@GetMapping("/main")
 	public String index() {

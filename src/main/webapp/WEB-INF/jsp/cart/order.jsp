@@ -204,7 +204,7 @@
                         <c:forEach var="item" items="${cartItems}">
                         <li>
                             <%-- 실제로는 상품 이미지 경로를 데이터베이스에서 가져와야 함 --%>
-                            <img src="https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=1974&auto=format&fit=crop" alt="${item.foodName}">
+                            <img src="${item.imgSrc}" alt="${item.foodName}">
                             <div class="item-info">
                                 <div class="item-name">${item.foodName}</div>
                                 <input type="hidden" name="cartId" value="${item.cartId}" />
