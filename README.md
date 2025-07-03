@@ -1,6 +1,7 @@
-![Logo](logo.png)
+
 
 # 🥬 SinsunEats (신선 잇츠)
+![Logo](logo.png)
 
 > 가장 신선한 순간을 당신의 식탁으로 전해드리는 온라인 식품몰
 
