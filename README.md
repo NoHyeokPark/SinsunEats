@@ -1,4 +1,4 @@
-(logo.png)
+![Logo](logo.png)
 
 # 🥬 SinsunEats (신선 잇츠)
 
