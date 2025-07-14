@@ -222,8 +222,6 @@
 								<span class="review-summary"> ${i.averageRating} (리뷰
 									${i.reviewCount}개) </span>
 							</div>
-							<button class="add-to-cart-btn"
-								onclick="cartIn('${i.foodCode}', 1)">장바구니 담기</button>
 						</div>
 					</div>
 				</c:forEach>

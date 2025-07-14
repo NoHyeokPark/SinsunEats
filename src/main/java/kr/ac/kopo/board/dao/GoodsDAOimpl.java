@@ -8,9 +8,11 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.ac.kopo.vo.CartVO;
 import kr.ac.kopo.vo.GoodsDetailVO;
 import kr.ac.kopo.vo.GoodsVO;
 import kr.ac.kopo.vo.ReviewVO;
+import kr.ac.kopo.vo.goodsAdminVO;
 import kr.ac.kopo.vo.nutritionVO;
 
 @Repository
@@ -63,4 +65,26 @@ public class GoodsDAOimpl implements GoodsDAO {
 		
 	}
 	
+	@Override
+	public List<goodsAdminVO> selectAd(Map<String, String> map) {
+		// TODO Auto-generated method stub
+		return sql.selectList("goods.listAd", map);
+	}
+	
+	@Override
+	public void goodsupdate(goodsAdminVO ad) {
+		sql.update("goods.update", ad);
+		sql.update("goods.updateDetail", ad);
+	}
+	
+	@Override
+	public void stockUpdate(GoodsDetailVO c) {
+		sql.update("goods.stockUpdate",c);
+	}
+	
+	@Override
+	public int stockCheck(String code) {
+		return sql.selectOne("goods.stock",code);
+		
+	}
 }

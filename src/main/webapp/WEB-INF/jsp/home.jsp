@@ -285,6 +285,9 @@
 		<jsp:include page="/WEB-INF/jsp/include/topmenu.jsp"></jsp:include>
 	</header>
 	<main>
+	<c:if test="${not empty errorMsg}">
+    <div class="alert alert-danger">${errorMsg}</div>
+	</c:if>
 		<%-- 기존 hero 섹션 대신 아래 캐러셀 코드로 교체 --%>
 		<section id="eventCarousel" class="carousel slide"
 			data-bs-ride="carousel">
