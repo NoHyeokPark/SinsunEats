@@ -1,5 +1,8 @@
 package kr.ac.kopo.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
@@ -7,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import kr.ac.kopo.board.dao.MemberDAO;
 import kr.ac.kopo.vo.MemberVO;
 import kr.ac.kopo.vo.OrderVO;
+import kr.ac.kopo.vo.goodsAdminVO;
 
 @Service
 public class MemberService {
@@ -39,5 +43,11 @@ public class MemberService {
 		u.setMileage(order.getUsedMileage());
 		user.useMileage(u);
 	}
+	
+	public List<MemberVO> searchAdmin(Map<String, String> map){
+		
+		return user.selectAd(map);
+	}
+	
 
 }

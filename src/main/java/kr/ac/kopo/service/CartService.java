@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kr.ac.kopo.board.dao.CartDAO;
 import kr.ac.kopo.board.dao.CartDAOimpl;
+import kr.ac.kopo.board.dao.GoodsDAO;
 import kr.ac.kopo.board.dao.OrderDAO;
 import kr.ac.kopo.vo.CartVO;
 import kr.ac.kopo.vo.OrderDetailVO;
@@ -19,10 +21,13 @@ import kr.ac.kopo.vo.OrderVO;
 public class CartService {
 
 	@Autowired
-	private CartDAOimpl cartDAO;
+	private CartDAO cartDAO;
 	
 	@Autowired
 	private OrderDAO od;
+	
+	@Autowired
+	private GoodsService gs;
 	
 
 	public void addCartItem(CartVO cart) {
@@ -54,9 +59,10 @@ public class CartService {
 		cartDAO.update(c);
 	}
 	
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void convert(List<CartVO> list, OrderVO ov) {
 		od.insertOv(ov);
+		
 		int delid = ov.getDeliveryId();
 		for(CartVO c : list) {
 			OrderDetailVO odvo = new OrderDetailVO();
@@ -65,8 +71,10 @@ public class CartService {
 			odvo.setPrice(c.getDiscountPrice());
 			odvo.setQuantity(c.getQuantity());
 			od.insertDetail(odvo);
-			cartDAO.delete(c.getCartId());	
+			cartDAO.delete(c.getCartId());
+			gs.stockUpdate(c.getFoodCode(), c.getFoodName(), c.getQuantity());		
 		}
+
 	}
 	
 	public List<OrderVO> search(Map<String, String> map){

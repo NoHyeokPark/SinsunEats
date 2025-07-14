@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/include/adminHelper.jsp"></jsp:include>
     <header class="admin-header">
     <jsp:include page="/WEB-INF/jsp/include/adminTop.jsp"></jsp:include>
     </header>
@@ -66,22 +66,25 @@
         </div>
 
         <!-- 필터 및 검색 바 -->
+        <form action="${pageContext.request.contextPath}/admin/goods/search"
+			method="post">
         <div class="filter-bar shadow-sm">
-            <select class="form-select form-select-sm">
-                <option selected>전체 카테고리</option>
+            <select class="form-select form-select-sm" name="category">
+                <option value="" selected>전체 카테고리</option>
                 <c:forEach items="${category}" var="cat" varStatus="loop">
-                <option value="${loop.count}">${cat.foodDiv}</option>
+                <option value="${cat.foodDiv}"  ${param.category eq cat.foodDiv ? 'selected' : ''}>${cat.foodDiv}</option>
                 </c:forEach>
             </select>
-            <select class="form-select form-select-sm">
-                <option selected>전체 상태</option>
-                <option value="selling">판매중</option>
-                <option value="soldout">품절</option>
-                <option value="hidden">숨김</option>
+            <select class="form-select form-select-sm" name="status">
+                <option value=''>전체 상태</option>
+                <option value="판매중"  ${param.status == '판매중' ? 'selected' : ''}>판매중</option>
+                <option value="품절"  ${param.status == '품절' ? 'selected' : ''}>품절</option>
+                <option value="숨김"  ${param.status == '숨김' ? 'selected' : ''}>숨김</option>
             </select>
-            <input type="text" class="form-control form-control-sm" placeholder="상품명 또는 상품코드로 검색">
-            <button class="btn btn-sm" style="background-color: var(--admin-primary-color); color:white;">검색</button>
+            <input name="key" type="text" class="form-control form-control-sm" placeholder="상품명 또는 상품코드로 검색">
+            <button type="submit" class="btn btn-sm" style="background-color: var(--admin-primary-color); color:white;">검색</button>
         </div>
+        </form>
 
         <!-- 상품 목록 테이블 -->
         <div class="table-responsive shadow-sm" style="border-radius: 8px; overflow: hidden;">
@@ -100,6 +103,59 @@
                 </thead>
                 <tbody>
                     <%-- 실제 데이터는 JSTL/EL을 사용하여 DB에서 가져와야 함 --%>
+                    
+                    <c:forEach var="i" items="${foods}">
+                                        <tr>
+                        <td><input type="checkbox"></td>
+                        <td>
+                            <div class="product-info">
+                                <img src="${i.imgSrc}" alt="상품 이미지">
+                                <div class="product-info-text">
+                                    <div class="name">${i.foodName}</div>
+                                    <div class="code">${i.foodCode}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="text-decoration: line-through; color: #888;">${i.price}</span><br>
+                            <strong>${i.discountPrice}</strong>
+                        </td>
+                        <td class="stock-control">
+                            <input type="number" class="form-control form-control-sm d-inline-block" value="${i.stock}">
+                            <button class="btn btn-sm btn-outline-secondary">변경</button>
+                        </td>
+                        <td><span class="badge bg-selling">${i.status}</span></td>
+                        <td>
+                        	<c:if test="${i.isBest eq 'Y' }">
+                            <span class="badge bg-promo">BEST</span>
+                            </c:if>
+                            <c:if test="${i.isNew eq 'Y' }">
+                            <span class="badge bg-promo">NEW</span>
+                            </c:if>
+                        </td>
+                        <td>${i.createdAt}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#productModal" onclick="openEditProductModal(this)"
+                            	 		data-food-name="${i.foodName}"
+                            	        data-food-code="${i.foodCode}"
+                            	        data-price="${i.price}"
+                            	        data-brand="${i.brand}"
+                            	        data-food-div="${i.foodDiv}"
+                            	        data-discount-percent="${i.discountPercent}" <%-- discountPercent가 있다는 가정 --%>
+                            	        data-stock="${i.stock}"
+                            	        data-thumbnail-url="${i.imgSrc}"
+                            	        data-status="${i.status}"
+                            	        data-is-best="${i.isBest}"
+                            	        data-is-new="${i.isNew}"
+                            	        data-detail-description="${i.detailDescription}"
+                            	        data-content-src="${i.contentSrc}"
+                      		>수정
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirm('정말로 삭제하시겠습니까?')">삭제</button>
+                        </td>
+                    </tr>
+                    </c:forEach>
+                     <!-- 
                     <tr>
                         <td><input type="checkbox"></td>
                         <td>
@@ -131,6 +187,7 @@
                         </td>
                     </tr>
                     <%-- 다른 상품들 반복... --%>
+                    -->
                 </tbody>
             </table>
         </div>
@@ -162,7 +219,7 @@
                         <label class="form-label">카테고리*</label>
                         <select class="form-select" name="categoryId" required>
                 <c:forEach items="${category}" var="cat" varStatus="loop">
-                <option value="${loop.count}">${cat.foodDiv}</option>
+                <option value="${cat.foodDiv}">${cat.foodDiv}</option>
                 </c:forEach>
                         </select>
                     </div>
@@ -213,6 +270,10 @@
                     </div>
                 </div>
                 <hr>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">본문 이미지 URL</label>
+                        <input type="text" class="form-control" name="contentSrc">
+                    </div>
                 <div class="mb-3">
                     <label class="form-label">상세 설명 (CLOB)</label>
                     <textarea class="form-control" name="detailDescription" rows="5"></textarea>
@@ -221,7 +282,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-            <button type="submit" form="productForm" class="btn" style="background-color:var(--admin-primary-color); color:white;">저장하기</button>
+            <button type="button" onclick="saveProduct()" class="btn" style="background-color:var(--admin-primary-color); color:white;">저장하기</button>
           </div>
         </div>
       </div>
@@ -231,27 +292,94 @@
 	</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+    
         // 새 상품 등록 모달 열기
         function openNewProductModal() {
             document.getElementById('productModalLabel').textContent = '새 상품 등록';
             document.getElementById('productForm').reset();
-            // 상품코드 필드를 활성화
-            document.querySelector('input[name="foodCode"]').readOnly = false; 
+
         }
 
         // 기존 상품 수정 모달 열기 (실제로는 상품 데이터를 파라미터로 받아 폼을 채워야 함)
-        function openEditProductModal() {
+        function openEditProductModal(button) {
             document.getElementById('productModalLabel').textContent = '상품 정보 수정';
             document.getElementById('productForm').reset(); // 우선 폼 초기화
+            const dataset = button.dataset;
+            const f = document.forms['productForm'];
             
-            // --- 예시 데이터로 폼 채우기 (실제 구현 시, DB에서 가져온 데이터 사용) ---
-            document.querySelector('input[name="foodName"]').value = '고당도 파인애플 1통';
-            document.querySelector('input[name="foodCode"]').value = 'F0001';
-            document.querySelector('input[name="foodCode"]').readOnly = true; // 상품코드는 수정 불가
-            document.querySelector('input[name="price"]').value = 12000;
-            document.querySelector('input[name="discountPercent"]').value = 17.5; // 예시
-            // ... 나머지 필드 채우기
-            // -----------------------------------------------------------------
+            f.foodName.value  = dataset.foodName;
+            f.foodCode.value  = dataset.foodCode;
+            f.foodCode.readOnly = true; // 상품 코드는 수정 불가
+
+            f.categoryId.value = dataset.foodDiv;
+            f.price.value   = dataset.price;
+            f.brand.value = dataset.brand;
+            f.discountPercent.value = dataset.discountPercent;
+            f.stock.value = dataset.stock;
+            f.thumbnailUrl.value = dataset.thumbnailUrl;
+            f.status.value  = dataset.status;
+            
+            // 체크박스 설정
+            f.isBest.checked  = (dataset.isBest === 'Y');
+            f.isNew.checked = (dataset.isNew === 'Y');
+
+            f.contentSrc.value = dataset.contentSrc;
+            f.detailDescription.value = dataset.detailDescription;
+        }
+        
+        function saveProduct(){
+        	const form = document.getElementById('productForm');
+
+            // 1. 폼 데이터를 기반으로 JSON 객체 생성
+            const productData = {
+                foodCode: form.foodCode.value,
+                foodName: form.foodName.value,
+                foodDiv: form.categoryId.value, // <select name="categoryId">의 값
+                brand: form.brand.value,
+                price: form.price.value,
+                discountPercent: form.discountPercent.value,
+                stock: form.stock.value,
+                imgSrc: form.thumbnailUrl.value,
+                status: form.status.value,
+                isBest: form.isBest.checked ? 'Y' : 'N', // 체크박스는 .checked 속성 확인
+                isNew: form.isNew.checked ? 'Y' : 'N',
+                detailDescription: form.detailDescription.value,
+                contentSrc: form.contentSrc.value
+            };
+
+            // 2. fetch API를 사용해 서버에 POST 요청 전송
+            fetch('${pageContext.request.contextPath}/admin/goods/update', {
+                method: 'POST', // 또는 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productData), // JavaScript 객체를 JSON 문자열로 변환
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // 서버 응답이 실패(4xx, 5xx)했을 경우 에러 처리
+                    throw new Error('서버 응답이 올바르지 않습니다.');
+                }
+                return response.json(); // 응답을 JSON으로 파싱
+            })
+            .then(data => {
+                // 3. 성공적으로 처리된 경우
+                if (data.success) {
+                    alert('수정되었습니다');
+                    // 모달을 닫고 페이지를 새로고침하여 변경사항 확인
+                    const productModal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+                    productModal.hide();
+                    location.reload();
+                } else {
+                    // 서버에서 비즈니스 로직상 에러를 반환한 경우
+                    alert('수정 실패: ');
+                }
+            })
+            .catch(error => {
+                // 4. 네트워크 오류 등 요청 자체가 실패한 경우
+                console.error('Error:', error);
+                alert('상품 수정 중 오류가 발생했습니다.');
+            });
         }
     </script>
 </body>

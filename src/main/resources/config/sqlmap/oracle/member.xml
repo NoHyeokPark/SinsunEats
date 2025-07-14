@@ -30,4 +30,12 @@ set mileage =  mileage + #{mileage}
 where id = #{id}
 </update>
 
+<select id="memberAd" resultType="userVO" parameterType="Map">
+select id, name, password, email_id as emailId, email_domain as emailDomain, tel1, tel2, tel3, post, basic_addr as basicAddr, detail_addr as DetailAddr, type, reg_date as regDate, mileage
+from MEMBERs
+where id LIKE '%' || #{key} || '%' or name LIKE '%' || #{key} || '%' or email_id LIKE '%' || #{key} || '%'
+order by id
+
+</select>
+
 </mapper>

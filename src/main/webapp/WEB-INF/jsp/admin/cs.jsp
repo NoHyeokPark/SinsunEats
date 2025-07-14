@@ -100,7 +100,7 @@ body {
 </style>
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/include/adminHelper.jsp"></jsp:include>
 	<header class="admin-header">
 		<jsp:include page="/WEB-INF/jsp/include/adminTop.jsp"></jsp:include>
 	</header>

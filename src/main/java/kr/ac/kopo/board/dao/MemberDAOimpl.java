@@ -1,5 +1,8 @@
 package kr.ac.kopo.board.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -49,5 +52,11 @@ public class MemberDAOimpl implements MemberDAO {
 	public void useMileage(MemberVO m) {
 		sql.update("board.dao.MemberDAO.mileage", m);
 		
+	}
+	
+	@Override
+	public List<MemberVO> selectAd(Map<String, String> map) {
+		// TODO Auto-generated method stub
+		return sql.selectList("board.dao.MemberDAO.memberAd",map);
 	}
 }

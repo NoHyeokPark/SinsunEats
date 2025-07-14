@@ -20,14 +20,14 @@ where user_id = #{userId} and food_code = #{foodCode}
 </select>
 
 <select id="selectCart" resultMap="carts" parameterType="String">
-select Cart_id, user_id, c.food_code as food_code, quantity, added_at, fi.food_name as foodName, fi.price as price, fi.DISCOUNT_PRICE discountPrice, fi.DISCOUNT_PERCENT discountPercent, fi.img_src as imgSrc 
+select Cart_id, user_id, c.food_code as food_code, quantity, added_at, fi.food_name as foodName, trunc(fi.price*((100-fi.discount_Percent)/100), -2) as discountPrice, fi.DISCOUNT_PERCENT discountPercent, fi.img_src as imgSrc 
 from cart c join food_item fi
 on c.food_code = fi.food_code
 where user_id = #{a}
 </select>
 
 <select id="selectCheckCart" resultMap="carts" parameterType="int">
-select Cart_id, user_id, c.food_code as food_code, quantity, added_at, fi.food_name as foodName, fi.price as price, fi.DISCOUNT_PRICE discountPrice, fi.DISCOUNT_PERCENT discountPercent, fi.img_src as imgSrc  
+select Cart_id, user_id, c.food_code as food_code, quantity, added_at, fi.food_name as foodName, fi.price as price, trunc(fi.price*((100-fi.discount_Percent)/100), -2) as discountPrice, fi.DISCOUNT_PERCENT discountPercent, fi.img_src as imgSrc  
 from cart c join food_item fi
 on c.food_code = fi.food_code
 where cart_id = #{a}
@@ -64,8 +64,6 @@ and DELIVERY_STATUS = #{status}
 and (user_id = #{keyword} or RECIPIENT_NAME = #{keyword})
 </if>
 </where>
-
-
 
 </select>
 

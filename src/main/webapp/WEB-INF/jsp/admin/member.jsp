@@ -40,7 +40,7 @@
 </style>
 </head>
 <body>
-
+<jsp:include page="/WEB-INF/jsp/include/adminHelper.jsp"></jsp:include>
      <header class="admin-header">
     <jsp:include page="/WEB-INF/jsp/include/adminTop.jsp"></jsp:include>
     </header>
@@ -49,18 +49,13 @@
         <h2 class="h3 mb-4">회원 관리</h2>
 
         <!-- 필터 및 검색 바 -->
+         <form action="${pageContext.request.contextPath}/admin/member"
+			method="get">
         <div class="filter-bar shadow-sm">
-            <select class="form-select form-select-sm" style="width: 150px;">
-                <option selected>전체 등급</option>
-                <option value="U">일반회원</option>
-                <option value="A">관리자</option>
-                <option value="V">VIP</option>
-                <option value="S">정지회원</option>
-            </select>
-            <input type="text" class="form-control form-control-sm" placeholder="회원ID, 이름, 이메일 검색">
-            <button class="btn btn-sm" style="background-color: var(--admin-primary-color); color:white;">검색</button>
+            <input name="key" type="text" class="form-control form-control-sm" placeholder="회원ID, 이름, 이메일 검색">
+            <button  type="submit" class="btn btn-sm" style="background-color: var(--admin-primary-color); color:white;">검색</button>
         </div>
-
+</form>
         <!-- 회원 목록 테이블 -->
         <div class="table-responsive shadow-sm" style="border-radius: 8px; overflow: hidden;">
             <table class="member-table">
@@ -70,57 +65,25 @@
                         <th>이름</th>
                         <th>이메일</th>
                         <th>연락처</th>
-                        <th>등급</th>
                         <th>가입일</th>
                         <th>관리</th>
                     </tr>
                 </thead>
                 <tbody>
                     <%-- 실제 데이터는 JSTL/EL을 사용하여 DB에서 가져와야 함 --%>
+                    <c:forEach items="${members}" var="userlist" varStatus="loop">
                     <tr>
-                        <td>user01</td>
-                        <td>김신선</td>
-                        <td>fresh@example.com</td>
-                        <td>010-1234-5678</td>
-                        <td>
-                            <div class="inline-form">
-                                <select class="form-select form-select-sm">
-                                    <option value="U" selected>일반회원</option>
-                                    <option value="V">VIP</option>
-                                    <option value="S">활동정지</option>
-                                    <option value="A">관리자</option>
-                                </select>
-                                <button class="btn btn-sm btn-outline-secondary">저장</button>
-                            </div>
-                        </td>
-                        <td>2025-06-20</td>
+                        <td>${userlist.id}</td>
+                        <td>${userlist.name}</td>
+                        <td>${userlist.emailId}${userlist.emailDomain}</td>
+                        <td>${userlist.tel1}-${userlist.tel2}-${userlist.tel3}</td>
+                        <td>${userlist.regDate}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#memberDetailModal">상세보기</button>
                             <button class="btn btn-sm btn-outline-danger">강제탈퇴</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td>user02</td>
-                        <td>박헬시</td>
-                        <td>healthy@example.com</td>
-                        <td>010-9876-5432</td>
-                        <td>
-                            <div class="inline-form">
-                                <select class="form-select form-select-sm">
-                                    <option value="U">일반회원</option>
-                                    <option value="V" selected>VIP</option>
-                                    <option value="S">활동정지</option>
-                                    <option value="A">관리자</option>
-                                </select>
-                                <button class="btn btn-sm btn-outline-secondary">저장</button>
-                            </div>
-                        </td>
-                        <td>2025-05-15</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#memberDetailModal">상세보기</button>
-                            <button class="btn btn-sm btn-outline-danger">강제탈퇴</button>
-                        </td>
-                    </tr>
+                   </c:forEach>
                 </tbody>
             </table>
         </div>

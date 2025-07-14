@@ -62,6 +62,55 @@ from food
 where food_code = #{s}
 </select>
 
+<select id="listAd" resultType="kr.ac.kopo.vo.goodsAdminVO" parameterType="Map">
+select food_Name foodName, discount_Percent discountPercent, fi.food_code foodCode, CREATED_AT createdAt, price, is_best isBest, is_new isNew
+,  img_src imgSrc, stock, brand, food_div foodDiv, status, trunc(price*((100-discount_Percent)/100), -2) discountPrice
+, DETAIL_DESCRIPTION detailDescription, NVL(content_Src, 'none') contentSrc
+from food_item fi join food_details fd
+on fi.food_code = fd.food_code
+<where>
+<if test="category != null and category != ''">
+food_div = #{category}
+</if>
+<if test="status != null and status != ''">
+and STATUS = #{status}
+</if>
+<if test="key != null and key != ''">
+and (fi.food_code LIKE '%' || #{key} || '%' or food_name LIKE '%' || #{key} || '%')
+</if>
+</where>
+order by food_name
+
+</select>
+
+<update id="update" parameterType="kr.ac.kopo.vo.goodsAdminVO">
+update food_item
+set food_Name = #{foodName}, food_div = #{foodDiv}, brand = #{brand}, price = #{price}, discount_Percent = #{discountPercent}, status = #{status}
+, is_best = #{isBest}, is_new = #{isNew}, img_src = #{imgSrc}   
+where food_code = #{foodCode}
+
+</update>
+
+<update id="updateDetail" parameterType="kr.ac.kopo.vo.goodsAdminVO">
+update food_details
+set stock = #{stock}, detail_Description = #{detailDescription}, content_Src = #{contentSrc} 
+where food_code = #{foodCode}
+
+</update>
+
+<select id="stock" resultType="int" parameterType="String">
+select stock
+from food_details
+where food_code = #{s}
+FOR UPDATE
+</select>
+
+<update id="stockUpdate" parameterType="kr.ac.kopo.vo.GoodsDetailVO">
+update food_details
+set stock = stock - #{stock}
+where food_code = #{foodCode} AND stock >= #{stock}
+</update>
+
 <resultMap type="gvo" id="goods">
  <result column="food_code" property="foodCode" />
   <result column="discount_Percent" property="discountPercent" />

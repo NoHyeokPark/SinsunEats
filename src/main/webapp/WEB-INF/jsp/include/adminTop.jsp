@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	
 <div class="logo">
 	<a href="${pageContext.request.contextPath}/admin/main"
 		style="text-decoration: none;">신선 잇츠 <span class="sub-title">관리자

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import kr.ac.kopo.service.CartService;
@@ -65,6 +67,12 @@ public class CartController {
 		mav.addObject("orderInfo",ov);
 		return mav;
 	}
+	
+    @ExceptionHandler(IllegalStateException.class)
+    public String handleStockException(IllegalStateException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("errorMsg", ex.getMessage());
+        return "redirect:/home";
+    }
 
 	@ResponseBody
 	@PostMapping("/add")
@@ -115,7 +123,6 @@ public class CartController {
 	@PostMapping("/updateQuantity")
 	public Map<String, Object> updateCart(@RequestBody CartVO cart) {
 		Map<String, Object> result = new HashMap<>();
-		System.out.println("1");
 		try {
 			cartService.update(cart.getCartId(), cart.getQuantity()); 
 			result.put("success", true);
