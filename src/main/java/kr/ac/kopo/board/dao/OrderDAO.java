@@ -14,4 +14,6 @@ public interface OrderDAO {
 	public List<OrderDetailVO> selectDetail(OrderVO order);
 	public OrderVO selectOne(OrderVO order);
 	public List<OrderVO> selectCs(String id);
+	public int getNextId();
+	public void delete(int id);
 }

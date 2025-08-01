@@ -104,6 +104,17 @@ public class CartService {
 		return od.selectCs(id);
 	}
 	
+	public void paySuccess(int id, String pK) {
+		OrderVO ov = new OrderVO();
+		ov.setDeliveryId(id);
+		ov.setDeliveryStatus("출고준비");
+		ov.setPaymentKey(pK);
+		od.statusUpdate(ov);
+	}
+	
+	public void deleteOrder(int id) {
+		od.delete(id);
+	}
 
 	
 }

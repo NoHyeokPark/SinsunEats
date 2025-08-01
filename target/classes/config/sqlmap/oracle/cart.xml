@@ -67,6 +67,8 @@ and (user_id = #{keyword} or RECIPIENT_NAME = #{keyword})
 
 </select>
 
+
+
 <resultMap type="kr.ac.kopo.vo.CartVO" id="carts">
  <result column="Cart_id" property="cartId" />
   <result column="user_id" property="userId" />

@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
     <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
-        <a href="${pageContext.request.contextPath}/info" class="logo"><img alt="" src="/reference/img/logo.png"/>신선 잇츠</a>
+        <a href="${pageContext.request.contextPath}/info" class="logo">신선 잇츠</a>
         <nav>
             <ul>
                 <li><a href="${pageContext.request.contextPath}/home">홈</a></li>

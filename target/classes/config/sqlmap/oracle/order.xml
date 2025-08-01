@@ -12,12 +12,17 @@
         SELECT seq_delivery.NEXTVAL FROM dual
     </selectKey>
 
-    INSERT INTO delivery (DELIVERY_ID, USER_ID, RECIPIENT_NAME, RECIPIENT_PHONE, ADDRESS, ADDRESS_DETAIL, POST_CODE, TOTAL_PRICE, PAYMENT_METHOD, used_mileage
+    INSERT INTO delivery (DELIVERY_ID, USER_ID, RECIPIENT_NAME, RECIPIENT_PHONE, ADDRESS, ADDRESS_DETAIL, POST_CODE, TOTAL_PRICE, PAYMENT_METHOD, used_mileage, DELIVERY_STATUS
     )
     VALUES (#{deliveryId}, #{userId}, #{recipientName}, #{recipientPhone}
-    , #{address}, #{addressDetail}, #{postCode}, #{totalPrice}, #{paymentMethod}, #{usedMileage}
+    , #{address}, #{addressDetail}, #{postCode}, #{totalPrice}, 
+    #{paymentMethod}, #{usedMileage}, #{deliveryStatus}
     )
 </insert>
+
+<select id="getNextId" resultType="int">
+    SELECT seq_delivery.NEXTVAL FROM DUAL
+</select>
 
 
 <insert id="insertDetail" parameterType="kr.ac.kopo.vo.OrderDetailVO">
@@ -32,6 +37,9 @@
 <update id="updateOv" parameterType="kr.ac.kopo.vo.OrderVO">
 update delivery
 set DELIVERY_STATUS = #{deliveryStatus}
+<if test="paymentKey != null and paymentKey != ''">
+, payment_Key = #{paymentKey}
+</if>
 where delivery_Id = #{deliveryId}
 </update>
 
@@ -63,5 +71,15 @@ POST_CODE postCode, TOTAL_PRICE totalPrice, PAYMENT_METHOD paymentMethod, used_m
 from delivery
 where user_id = #{a}
 </select>
+
+<delete id="delete" parameterType="int">
+DELETE FROM delivery
+where delivery_Id = #{deliveryId}
+</delete>
+
+<delete id="deleteItem" parameterType="int">
+DELETE FROM delivery_item
+where delivery_Id = #{deliveryId}
+</delete>
 
 </mapper>

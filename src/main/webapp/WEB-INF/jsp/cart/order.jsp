@@ -151,7 +151,7 @@
 
     <main class="container">
         <h2 class="section-title" style="margin-top: 40px;">주문/결제</h2>
-        <form id="orderForm" action="${pageContext.request.contextPath}/cart/process" method="post">
+        <form id="orderForm" action="${pageContext.request.contextPath}/cart/toss" method="post">
             <div class="order-page-container">
 
                 <section class="order-form-section">

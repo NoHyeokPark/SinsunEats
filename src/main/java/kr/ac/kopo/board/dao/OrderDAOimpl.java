@@ -55,4 +55,17 @@ public class OrderDAOimpl implements OrderDAO {
 		// TODO Auto-generated method stub
 		return sql.selectList("board.dao.OrderDAO.selectCsOVO",id);
 	}
+	
+	@Override
+	public int getNextId() {
+		return sql.selectOne("board.dao.OrderDAO.getNextId");
+	}
+	
+	@Override
+	public void delete(int id) {
+		sql.delete("board.dao.OrderDAO.delete", id);
+		sql.delete("board.dao.OrderDAO.deleteItem", id);
+		
+	}
+	
 }

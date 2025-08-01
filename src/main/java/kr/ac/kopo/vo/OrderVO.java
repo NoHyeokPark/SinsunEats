@@ -23,4 +23,5 @@ public class OrderVO {
 		private int invoiceNumber;
 		private String updatedAt;
 		private int usedMileage;
+		private String paymentKey;
 }
